@@ -11,7 +11,7 @@ function App() {
     setError(null);
     try {
       // Assuming backend runs on port 3001
-      const response = await fetch('http://localhost:3001/api/translate', {
+      const response = await fetch('/api/translate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query })
