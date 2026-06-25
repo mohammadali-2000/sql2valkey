@@ -1,8 +1,8 @@
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const Redis = require('ioredis');
-const sqlMappings = require('./sqlMappings');
+import 'dotenv/config';
+import express from 'express';
+import cors from 'cors';
+import Redis from 'ioredis';
+import sqlMappings from './sqlMappings.js';
 
 const app = express();
 
@@ -219,4 +219,4 @@ app.post('/api/translate', async (req, res) => {
   }
 });
 
-module.exports = app;
+export default app;

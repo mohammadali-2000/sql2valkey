@@ -100,4 +100,4 @@ const sqlToValkeyMappings = [
   }
 ];
 
-module.exports = sqlToValkeyMappings;
+export default sqlToValkeyMappings;
