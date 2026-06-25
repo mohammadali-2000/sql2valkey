@@ -8,17 +8,16 @@
 Relational SQL developers often struggle to understand how to map their normalized table queries to high-performance, in-memory, key-value data structures like **Valkey** (a fork of Redis). **SQL2Valkey** acts as an interactive learning bridge. It translates common SQL queries into equivalent Valkey commands, explaining the precise data structure and architecture required to execute them natively.
 
 ## 🏗 Architecture
-Our architecture eliminates heavy LLM dependencies in favor of an ultra-fast, local intent-based Rule Engine backed by a live Valkey Cache layer.
+Our architecture eliminates heavy LLM dependencies in favor of an ultra-fast, local intent-based Rule Engine. It runs entirely on **Vercel Serverless Functions** with graceful fallbacks for a Valkey Cache layer.
 
 ```mermaid
 graph TD;
-    A[React Frontend] -->|POST /api/translate| B(Express Backend);
+    A[React Frontend] -->|POST /api/translate| B(Vercel Serverless API);
     B --> C{Check Valkey Cache};
     C -- Hit --> D[Return Cached Translation];
     C -- Miss --> E[Intent-Based Rule Engine];
     E -->|Regex Parsed| F[Generate Valkey Command];
-    F --> G[Store in Valkey Cache];
-    G --> H[Return Translation to UI];
+    F --> G[Store in Cache & Return];
 ```
 
 ## ✨ Features
@@ -29,42 +28,35 @@ graph TD;
 
 ## 🛠 Tech Stack
 - **Frontend**: React, Vite, Tailwind CSS
-- **Backend**: Node.js, Express
-- **Storage/Cache**: Valkey (via `ioredis` driver)
+- **Backend API**: Vercel Serverless Functions (Node.js)
+- **Storage/Cache**: Valkey (Optional via `ioredis` driver)
 - **Engine**: Local Intent-Based Regex Parser
 
 ## 🚀 Setup Instructions
 
 ### 1. Prerequisites
 - Node.js (v18+)
-- Valkey Server (running locally on port `6379`)
+- Valkey Server (Optional for caching, running locally on port `6379`)
 
-### 2. Install & Run Backend
-```bash
-cd backend
-npm install
-npm start
-```
+### 2. Install & Run
+We use a unified frontend and serverless backend architecture.
 
-### 3. Install & Run Frontend
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-The application will be running at `http://localhost:5173`.
+The application will be running at `http://localhost:5173`, with API requests proxied automatically.
 
-## 📸 Screenshots
+## 📸 Screenshots & Demo
 
-*(Add screenshot images here)*
-- **Translation Engine:** Shows a successful mapping of `SELECT * FROM users WHERE id=1`.
-- **Cache Hit:** Shows the sub-millisecond return of a previously translated query.
-- **Unsupported Flag:** Shows the educational fallback for a `JOIN` operation.
+### 🚀 Live Demo: **[https://sql2valkey.vercel.app](https://sql2valkey.vercel.app)**
 
-## 🎥 Demo
-
-*(Link to live video demo or hosted instance here)*
+Try entering the following queries in the live application:
+- `SELECT * FROM users WHERE id=1` (Translates to `HGETALL`)
+- `INSERT INTO users (name, age) VALUES ('Ali', 30)` (Translates to `HSET`)
+- `SELECT users.name, orders.total FROM users JOIN orders ON users.id = orders.user_id` (Will show the graceful fallback explaining why JOINs are unsupported in Key-Value stores).
 
 ## 🔮 Future Improvements
 1. **AI Integration**: Replace the static rule engine with a truly generative LLM to handle infinitely complex SQL edge-cases.
